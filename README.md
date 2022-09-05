@@ -1,2 +1,20 @@
-# dapp-milky-swap
-Milky Swap in a follow-up repo | How to interact with MetaMask and Ethereum Testnets
+# Dapp | Milky Swap
+
+
+This repo has been created thanks to the [Javascript Mastery](https://www.youtube.com/watch?v=Wn_Kb3MR_cU&ab_channel=JavaScriptMastery) tutorial.
+
+It is a simple example of how to interact with MetaMask and Ethereum Testnets.
+
+### A glance at the Milky Swap (A random name)
+<img src ="./preview-1.png"> </img>
+
+
+### A second preview
+<img src ="./preview-2.png"> </img>
+
+
+### How to run the project
+Check out the Client folder
+
+1. [Client App](client)
+2. [Smart Contract](smart-contract)
