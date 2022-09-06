@@ -1,10 +1,10 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { SiEthereum } from 'react-icons/si';
 import { BsInfoCircle } from 'react-icons/bs';
 
 import { useTransactionContext } from "../context/useTransactionContext";
+import { shortenAddress } from '../utils/helper'
 import Loader from "./Loader";
-import { useEffect } from "react";
 
 const Input = ({ placeholder, onChange, name, type, value, inputRef }) => {
 
@@ -95,7 +95,7 @@ export const CryptoCardForm = () => {
                     </div>
                     <div>
                         <p className='text-white text-sm font-light'>
-                            {account || `Address`}
+                            {account ? shortenAddress(account) : `Address`}
                         </p>
                         <p className='text-white text-lg font-semibold'>
                             Ethereum
