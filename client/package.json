@@ -2,11 +2,11 @@
   "name": "lead-2-milky-swap",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://davidramos-om.github.io/dapp-milky-swap",
+  "homepage": ".",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "predeploy": "rm -rf node_modules/.cache/gh-pages && npm run build",
+    "predeploy": "rm -rf build && rm -rf node_modules/.cache/gh-pages && npm run build",
     "deploy": "gh-pages -d build",
     "preview": "vite preview"
   },
