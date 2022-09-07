@@ -17,7 +17,6 @@ export default function useFetch({ keyword }) {
             const { data } = await response.json();
 
             if (Array.isArray(data) && data.length > 0) {
-                console.log(`🐛  -> 🔥 :  fetchData 🔥 :  data`, data);
                 setData(data[ 0 ]?.images?.downsized_medium?.url);
             } else {
                 setData(default_gif);

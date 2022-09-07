@@ -25,7 +25,7 @@ const Input = ({ placeholder, onChange, name, type, value, inputRef }) => {
 
 export const CryptoCardForm = () => {
 
-    const { account, isConnected, processing, sendTransaction } = useTransactionContext();
+    const { account, isConnected, processing, sendTransaction, balance } = useTransactionContext();
     const refAmount = useRef(null);
     const refAddressTo = useRef(null);
     const refkeyword = useRef(null);
@@ -57,7 +57,7 @@ export const CryptoCardForm = () => {
             return;
 
         if (refAddressTo?.current)
-            refAddressTo.current.value = '0x16aaE63E97922d139A963f6E3e4c4413284d9080';
+            refAddressTo.current.value = '';
 
         if (refAmount?.current)
             refAmount.current.value = '';
@@ -99,10 +99,10 @@ export const CryptoCardForm = () => {
                     </div>
                     <div>
                         <p className='text-white text-sm font-light'>
-                            {account ? shortenAddress(account) : `Address`}
+                            {account ? shortenAddress(account) : `...`}
                         </p>
                         <p className='text-white text-lg font-semibold'>
-                            Ethereum
+                            {balance?.eth ? `${balance.eth} ETH` : `...`}
                         </p>
                     </div>
                 </div>

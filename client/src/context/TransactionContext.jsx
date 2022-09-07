@@ -12,6 +12,7 @@ export const TransactionContext = React.createContext({
     connectWallet: () => { },
     disconectWallet: () => { },
     sendTransaction: ({ addressTo, amount, keyword, message }) => { },
+    balance: { eth: 0, usd: 0 }
 });
 
 const { ethereum } = window;
@@ -32,6 +33,7 @@ export const TransactionProvider = ({ children }) => {
     const [ currentAccount, setConnectedAccount ] = useState('');
     const [ processing, setProcessing ] = useState({ status: false, breakpoint: '' });
     const [ transactions, setTransactions ] = useState([]);
+    const [ balance, setBalance ] = useState({ eth: 0, usd: 0 });
 
     useLayoutEffect(() => {
 
@@ -46,6 +48,7 @@ export const TransactionProvider = ({ children }) => {
             });
         }
     }, []);
+
 
     const checkIfWalletIsConnected = async () => {
 
@@ -76,7 +79,7 @@ export const TransactionProvider = ({ children }) => {
     const disconectWallet = async () => {
         try {
 
-            setConnectedAccount('');
+            setConnectedAccount('');            
             await ethereum.request({ method: 'eth_disconnect' });
         }
         catch (error) {
@@ -98,7 +101,7 @@ export const TransactionProvider = ({ children }) => {
                 return;
             }
 
-            setConnectedAccount(accounts[ 0 ]);
+            setConnectedAccount(accounts[ 0 ]);            
         }
         catch (error) {
             console.log(error);
@@ -182,6 +185,35 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
+    const getBalance = async () => {
+
+        try {
+
+            if (!ethereum) {
+                return;
+            }
+
+            if (!ethereum.isConnected()) {
+                return;
+            }
+
+            if (!currentAccount) {
+                setBalance({ eth: 0, usd: 0 });
+                return;
+            }
+
+            const network = 'rinkeby';
+            const provider = ethers.getDefaultProvider(network)
+            const balance = await provider.getBalance(currentAccount);
+            const formatBalance = ethers.utils.formatEther(balance);
+
+            setBalance({ eth: formatBalance, usd: 0 });
+        } catch (error) {
+            console.log(error);
+            setBalance({ eth: 0, usd: 0 });
+        }
+    }
+
     const sendTransaction = async ({ addressTo, amount, keyword, message }) => {
         try {
 
@@ -244,6 +276,7 @@ export const TransactionProvider = ({ children }) => {
             setProcessing({ status: true, breakpoint: 'Transaction counter' });
             checkIfTransactionExists();
             await getAllTransactions();
+            await getBalance();
             setProcessing({ status: false, breakpoint: 'Finished' });
         }
         catch (error) {
@@ -266,11 +299,15 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
+
+    useEffect(() => {
+        getBalance();
+    }, [ currentAccount ]);
+
     useEffect(() => {
         checkIfWalletIsConnected();
-        checkIfTransactionExists();
+        checkIfTransactionExists();        
     }, [])
-
 
     return (
         <TransactionContext.Provider value={{
@@ -280,7 +317,8 @@ export const TransactionProvider = ({ children }) => {
             transactions,
             connectWallet,
             disconectWallet,
-            sendTransaction
+            sendTransaction,
+            balance
         }}>
             {children}
         </TransactionContext.Provider>
