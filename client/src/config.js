@@ -1,2 +1,2 @@
 
-export const GIPHY_API = import.meta.VITE_GIPHY_API
+export const GIPHY_API = import.meta.env.VITE_GIPHY_API;

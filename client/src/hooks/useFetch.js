@@ -25,7 +25,7 @@ export default function useFetch({ keyword }) {
             setLoading(false);
         }
         catch (error) {
-            setData(default_gif);
+            setData('');
         }
     }
 

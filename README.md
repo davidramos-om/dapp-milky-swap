@@ -9,12 +9,14 @@ It is a simple example of how to interact with MetaMask and Ethereum Testnets.
 <img src ="./preview-1.png"> </img>
 
 
-### A second preview
+### Services
 <img src ="./preview-2.png"> </img>
 
+### Transaction preview
+<img src ="./preview-3.png"> </img>
 
-### How to run the project
-Check out the Client folder
+
+### How to run the project 
 
 1. [Client App](client)
 2. [Smart Contract](smart-contract)

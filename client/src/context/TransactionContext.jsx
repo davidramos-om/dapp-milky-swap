@@ -8,6 +8,7 @@ export const TransactionContext = React.createContext({
     isConnected: false,
     account: '',
     processing: { status: false, breakpoint: '' },
+    transactions: [],
     connectWallet: () => { },
     disconectWallet: () => { },
     sendTransaction: ({ addressTo, amount, keyword, message }) => { },
@@ -24,13 +25,13 @@ const getEthereumContract = () => {
     return transactionContract
 }
 
-const ls_count_key = 'transactionCount';
+export const ls_count_key = 'transactionCount';
+
 export const TransactionProvider = ({ children }) => {
 
     const [ currentAccount, setConnectedAccount ] = useState('');
     const [ processing, setProcessing ] = useState({ status: false, breakpoint: '' });
-    const [ transactionCount, setTransactionCount ] = useState(localStorage.getItem(ls_count_key) || 0);
-
+    const [ transactions, setTransactions ] = useState([]);
 
     useLayoutEffect(() => {
 
@@ -59,8 +60,8 @@ export const TransactionProvider = ({ children }) => {
                 return false;
             }
 
+            getAllTransactions();
             const accounts = await ethereum.request({ method: 'eth_accounts' });
-            console.log(`🐛  -> 🔥 :  checkIfWalletIsConnected 🔥 :  accounts`, accounts);
             if ((accounts?.length || 0) > 0)
                 setConnectedAccount(accounts[ 0 ]);
 
@@ -118,11 +119,73 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
+
+    const checkIfTransactionExists = async () => {
+
+        try {
+            const transactionContract = getEthereumContract();
+            const transactionCount = await transactionContract.getTransactionCount();
+
+            window.localStorage.setItem(ls_count_key, transactionCount);
+        }
+        catch (error) {
+
+            Toastify({
+                text: error?.message || '',
+                className: "error",
+                duration: 3000,
+                close: true,
+                position: 'right',
+                backgroundColor: '#f44336',
+            }).showToast();
+        }
+    }
+
+    const getAllTransactions = async () => {
+        try {
+
+            if (!ethereum) {
+                Toastify({ text: "Please, install Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+                return false;
+            }
+
+            if (!ethereum.isConnected()) {
+                Toastify({ text: "Please, connect to Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+                return false;
+            }
+
+            const transactionContract = getEthereumContract();
+            const transactions = await transactionContract.getAllTransactions();
+            const structuredTransactions = transactions.map((trx) => {
+
+                const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+                return {
+                    id: id,
+                    addressFrom: trx.sender,
+                    addressTo: trx.receiver,
+                    keyword: trx.keyword,
+                    message: trx.message,
+                    timestamp: new Date(trx.timeStamp.toNumber() * 1000).toLocaleString(),
+                    date: new Date(trx.timeStamp.toNumber() * 1000),
+                    amount: ethers.utils.formatEther(trx.amount),
+                    // amount: parseInt(trx.amount._hex) / (10 ** 18),
+                }
+            });
+
+            const topSortedTransactions = structuredTransactions.sort((a, b) => b.date - a.date).slice(0, 20);
+            setTransactions(topSortedTransactions);
+        }
+        catch (error) {
+            console.log(error);
+            setTransactions([]);
+        }
+    }
+
     const sendTransaction = async ({ addressTo, amount, keyword, message }) => {
         try {
 
             const isConnected = await checkIfWalletIsConnected();
-            console.log(`🐛  -> 🔥 :  sendTransaction 🔥 :  isConnected`, isConnected);
             if (!isConnected)
                 return;
 
@@ -162,7 +225,6 @@ export const TransactionProvider = ({ children }) => {
             setProcessing({ status: true, breakpoint: 'sending' });
             const transactionContract = getEthereumContract();
             const parsedAmount = ethers.utils.parseEther(amount);
-            console.log(` parsedAmount`, parsedAmount);
 
             setProcessing({ status: true, breakpoint: 'request confirmation' });
             const result = await ethereum.request({
@@ -175,19 +237,13 @@ export const TransactionProvider = ({ children }) => {
                 } ],
             });
 
-            console.info("eth_sendTransaction.result", result);
-
             setProcessing({ status: true, breakpoint: 'adding to blockchain' });
             const transactionHash = await transactionContract.addToBlockChain(addressTo, parsedAmount._hex, message, keyword);
-            console.info("loading - ", transactionHash.hash);
             transactionHash.wait();
-            console.info("Success - ", transactionHash.hash);
 
             setProcessing({ status: true, breakpoint: 'Transaction counter' });
-            const transactionCount = await transactionContract.getTransactionCount();
-            const nTransactionCount = transactionCount?.toNumber() || 0;
-            setTransactionCount(nTransactionCount);
-            localStorage.setItem(ls_count_key, nTransactionCount);
+            checkIfTransactionExists();
+            await getAllTransactions();
             setProcessing({ status: false, breakpoint: 'Finished' });
         }
         catch (error) {
@@ -212,6 +268,7 @@ export const TransactionProvider = ({ children }) => {
 
     useEffect(() => {
         checkIfWalletIsConnected();
+        checkIfTransactionExists();
     }, [])
 
 
@@ -220,6 +277,7 @@ export const TransactionProvider = ({ children }) => {
             isConnected: !!currentAccount,
             account: currentAccount,
             processing,
+            transactions,
             connectWallet,
             disconectWallet,
             sendTransaction

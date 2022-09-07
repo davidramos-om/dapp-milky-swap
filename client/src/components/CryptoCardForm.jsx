@@ -60,13 +60,13 @@ export const CryptoCardForm = () => {
             refAddressTo.current.value = '0x16aaE63E97922d139A963f6E3e4c4413284d9080';
 
         if (refAmount?.current)
-            refAmount.current.value = '0.0001';
+            refAmount.current.value = '';
 
         if (refkeyword?.current)
-            refkeyword.current.value = 'test 4';
+            refkeyword.current.value = '';
 
         if (refMessage?.current)
-            refMessage.current.value = 'test 4';
+            refMessage.current.value = '';
 
     }, [ isConnected, refAddressTo?.current, refAmount?.current, refkeyword?.current, refMessage?.current ]);
 
@@ -74,13 +74,17 @@ export const CryptoCardForm = () => {
 
         e.preventDefault();
 
-        console.log('handleSubmitTransaction');
         sendTransaction({
             addressTo: refAddressTo.current.value,
             amount: refAmount.current.value,
             keyword: refkeyword.current.value,
             message: refMessage.current.value
         });
+
+        //Clear the form
+        refAmount.current.value = 0;
+        refkeyword.current.value = '';
+        refMessage.current.value = '';        
     }
 
     return (

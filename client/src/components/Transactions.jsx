@@ -1,16 +1,14 @@
-
 import React, { useContext } from 'react';
 
 import { TransactionContext } from '../context/TransactionContext';
 import { shortenAddress } from '../utils/helper'
-import useFetch from '../hooks/useFetch';
-import dummyData from '../utils/dummyData'
+import useFetch from '../hooks/useFetch'; 
 
 
 const TransactionCard = ({ transaction }) => {
 
     const { id, url, message, timestamp, addressFrom, addressTo, amount, keyword } = transaction || {};
-    const [ gifUrl, loading ] = useFetch({ keyword });
+    const [ gifUrl ] = useFetch({ keyword });
 
     return (
         <div id={id} className="bg-[#181918] m-4 flex flex-1
@@ -39,7 +37,6 @@ const TransactionCard = ({ transaction }) => {
                     </p>
                     {message && (
                         <>
-                            <br />
                             <p className="text-white text-base">
                                 Message : {message}
                             </p>
@@ -63,7 +60,7 @@ const TransactionCard = ({ transaction }) => {
 
 const Transactions = () => {
 
-    const { account } = useContext(TransactionContext);
+    const { account, transactions } = useContext(TransactionContext);
 
     return (
         <div className="flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions">
@@ -82,7 +79,7 @@ const Transactions = () => {
                 }
 
                 <div className="flex flex-wrap justify-center items-center mt-10">
-                    {dummyData.reverse().map((trn, index) => (
+                    {transactions.reverse().map((trn, index) => (
                         <TransactionCard key={trn.id} transaction={trn} />
                     ))}
                 </div>
