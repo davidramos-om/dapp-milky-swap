@@ -1,6 +1,5 @@
 # Dapp | Milky Swap
 
-
 This repo has been created thanks to the [Javascript Mastery](https://www.youtube.com/watch?v=Wn_Kb3MR_cU&ab_channel=JavaScriptMastery) tutorial.
 
 It is a simple example of how to interact with MetaMask and Ethereum Testnets.
