@@ -44,26 +44,30 @@ export const TransactionProvider = ({ children }) => {
                 if ((accounts?.length || 0) <= 0)
                     disconectWallet();
                 else
-                    checkIfWalletIsConnected();
+                    checkIfWalletIsConnected(false);
             });
         }
     }, []);
 
 
-    const checkIfWalletIsConnected = async () => {
+    const checkIfWalletIsConnected = async (showMessage = false) => {
 
         try {
             if (!ethereum) {
-                Toastify({ text: "Please, install Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+                if (showMessage)
+                    Toastify({ text: "Please, install Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+
                 return false;
             }
 
             if (!ethereum.isConnected()) {
+                if (showMessage)
                 Toastify({ text: "Please, connect to Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+
                 return false;
             }
 
-            getAllTransactions();
+            getAllTransactions(showMessage);
             const accounts = await ethereum.request({ method: 'eth_accounts' });
             if ((accounts?.length || 0) > 0)
                 setConnectedAccount(accounts[ 0 ]);
@@ -90,7 +94,7 @@ export const TransactionProvider = ({ children }) => {
     const connectWallet = async () => {
         try {
 
-            if (!await checkIfWalletIsConnected())
+            if (!await checkIfWalletIsConnected(true))
                 return;
 
             await ethereum.enable();
@@ -123,9 +127,10 @@ export const TransactionProvider = ({ children }) => {
     }
 
 
-    const checkIfTransactionExists = async () => {
+    const checkIfTransactionExists = async (showMessage = false) => {
 
         try {
+
             const transactionContract = getEthereumContract();
             const transactionCount = await transactionContract.getTransactionCount();
 
@@ -133,27 +138,33 @@ export const TransactionProvider = ({ children }) => {
         }
         catch (error) {
 
-            Toastify({
-                text: error?.message || '',
-                className: "error",
-                duration: 3000,
-                close: true,
-                position: 'right',
-                backgroundColor: '#f44336',
-            }).showToast();
+            if (showMessage) {
+                Toastify({
+                    text: error?.message || '',
+                    className: "error",
+                    duration: 3000,
+                    close: true,
+                    position: 'right',
+                    backgroundColor: '#f44336',
+                }).showToast();
+            }
         }
     }
 
-    const getAllTransactions = async () => {
+    const getAllTransactions = async (showMessage = false) => {
         try {
 
             if (!ethereum) {
-                Toastify({ text: "Please, install Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+                if (showMessage)
+                    Toastify({ text: "Please, install Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+
                 return false;
             }
 
             if (!ethereum.isConnected()) {
-                Toastify({ text: "Please, connect to Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+                if (showMessage)
+                    Toastify({ text: "Please, connect to Metamask before using this app.", duration: 3000, close: true, position: 'center' }).showToast();
+
                 return false;
             }
 
@@ -217,7 +228,7 @@ export const TransactionProvider = ({ children }) => {
     const sendTransaction = async ({ addressTo, amount, keyword, message }) => {
         try {
 
-            const isConnected = await checkIfWalletIsConnected();
+            const isConnected = await checkIfWalletIsConnected(true);
             if (!isConnected)
                 return;
 
@@ -274,8 +285,8 @@ export const TransactionProvider = ({ children }) => {
             transactionHash.wait();
 
             setProcessing({ status: true, breakpoint: 'Transaction counter' });
-            checkIfTransactionExists();
-            await getAllTransactions();
+            checkIfTransactionExists(true);
+            await getAllTransactions(true);
             await getBalance();
             setProcessing({ status: false, breakpoint: 'Finished' });
         }
@@ -305,8 +316,8 @@ export const TransactionProvider = ({ children }) => {
     }, [ currentAccount ]);
 
     useEffect(() => {
-        checkIfWalletIsConnected();
-        checkIfTransactionExists();        
+        checkIfWalletIsConnected(false);
+        checkIfTransactionExists(false);        
     }, [])
 
     return (
