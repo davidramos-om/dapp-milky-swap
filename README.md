@@ -1,10 +1,10 @@
-# Dapp | Milky Swap
+# Dapp | Milky App
 
 This repo has been created thanks to the [Javascript Mastery](https://www.youtube.com/watch?v=Wn_Kb3MR_cU&ab_channel=JavaScriptMastery) tutorial.
 
 It is a simple example of how to interact with MetaMask and Ethereum Testnets.
 
-### A glance at the Milky Swap (A random name)
+### A glance at the Milky App (A random name)
 <img src ="./preview-1.png"> </img>
 
 

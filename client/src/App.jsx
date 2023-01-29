@@ -9,10 +9,10 @@ const App = () => {
 
     Swal.fire(
       {
-        title: 'Welcome to Milky Swap!',
-        html: `Bear in mind that this is a Dev dApp running on the Rinkeby Testnet. <br /> <br /> Please do not send any real Ether to this App.`,
+        title: 'Welcome to Milky App!',
+        html: `Bear in mind that this is a test dApp running on the Goerli Testnet. <br /> <br /> Please do not send any real Ether using this App.`,
         icon: 'info',
-        footer: `<a href="https://rinkeby.etherscan.io/address/0x52cb60a870cf8afd3c38fb0be79c2b2754daedb4" target="_blank" rel="noreferrer noopener nofollow">Go to contract</a>`
+        footer: `<a href="https://goerli.etherscan.io/address/0x29ee343a78b99C19E958A4e27Ed5D141Ed38d881" target="_blank" rel="noreferrer noopener nofollow">Go to contract</a>`
       },
     );
   }, []);

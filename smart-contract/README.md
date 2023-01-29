@@ -16,5 +16,10 @@ npx hardhat help
 
 # Run project (and generate contract address)
 ```shell
-npx hardhat run scripts/deploy.js --network rinkeby
+npx hardhat run scripts/deploy.js --network goerli
+```
+
+# Contract Address
+```shell
+0x29ee343a78b99C19E958A4e27Ed5D141Ed38d881
 ```
